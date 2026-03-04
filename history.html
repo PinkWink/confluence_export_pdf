@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project History - Confluence PDF Exporter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #fdfcfb 0%, #f5f0ff 50%, #fef9f4 100%);
+            color: #2d3748;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        header p {
+            font-size: 15px;
+            color: #718096;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 36px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #E8A0BF, #7B8EC8, #A0D2DB);
+            border-radius: 2px;
+        }
+        .step {
+            position: relative;
+            margin-bottom: 36px;
+        }
+        .step::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid #7B8EC8;
+            background: #fff;
+        }
+        .step.user::before { border-color: #E8A0BF; }
+        .step.bot::before { border-color: #7B8EC8; }
+
+        .step-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .step.user .step-label { background: #FDE8F0; color: #C05080; }
+        .step.bot .step-label { background: #E8EEFF; color: #5060A0; }
+
+        .step-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid #f0eef5;
+        }
+        .step-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        .step-card p, .step-card li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+        .step-card ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        .step-card li { margin: 4px 0; }
+        .step-card code {
+            background: #f7f5fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #805ad5;
+        }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+        .badge-done { background: #E6FFFA; color: #2C7A7B; }
+        .badge-key { background: #FEFCBF; color: #975A16; }
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Confluence PDF Exporter</h1>
+            <p>Project History &mdash; User requests &amp; Claude implementation log</p>
+        </header>
+
+        <div class="timeline">
+
+            <!-- Step 1 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>1. Confluence PDF 품질 개선 요청</h3>
+                    <p>Confluence Cloud의 기본 PDF exporter 출력이 이쁘지 않고, 특히 코드블록에 행번호가 보이지 않는 문제를 해결하고 싶다. MCP를 이용해 Confluence에 접속하여 페이지를 HTML/PDF로 변환할 수 있는지 문의.</p>
+                    <ul>
+                        <li>Domain: <code>https://pinkwink.atlassian.net/</code></li>
+                        <li>Email: <code>pinkwink.korea@gmail.com</code></li>
+                        <li>API Token: 제공 완료</li>
+                        <li>출력 형식: HTML + PDF 둘 다</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>2. 접근 방법 설계 및 계획 수립 <span class="badge badge-key">Plan</span></h3>
+                    <p>3가지 접근 방법(Confluence REST API + 스크립트, Confluence MCP Server, WebFetch) 중 <strong>REST API + Python 스크립트</strong> 방식을 선택.</p>
+                    <ul>
+                        <li>conda 환경 <code>confluence</code> 생성 (Python 3.11)</li>
+                        <li>패키지: <code>requests</code>, <code>beautifulsoup4</code>, <code>playwright</code>, <code>python-dotenv</code></li>
+                        <li>Playwright Chromium으로 PDF 렌더링</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>3. 핵심 스크립트 작성 <span class="badge badge-done">Done</span></h3>
+                    <p><code>confluence_export.py</code> 작성 &mdash; 주요 기능:</p>
+                    <ul>
+                        <li>Confluence REST API v2/v1 자동 전환</li>
+                        <li>URL에서 page ID 자동 추출</li>
+                        <li>코드블록 행번호 추가 (<code>&lt;ac:structured-macro&gt;</code> &rarr; styled HTML)</li>
+                        <li>이미지 base64 인라인 임베딩</li>
+                        <li>패널, 이모티콘, 링크, 상태 뱃지 등 매크로 변환</li>
+                        <li>Playwright Chromium으로 PDF 생성</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>4. 이미지 다운로드 경로 수정 <span class="badge badge-done">Bug Fix</span></h3>
+                    <p>Confluence Cloud의 이미지 다운로드 URL에 <code>/wiki</code> prefix가 필요함을 발견. <code>download_image()</code> 함수 수정으로 모든 첨부 이미지 정상 로드.</p>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>5. 커버 페이지 + 목차 페이지 추가 요청</h3>
+                    <p>제목 페이지(PinkLAB 로고 + 제목)와 목차 페이지를 만들어달라. 테스트 페이지에 다시 적용 요청.</p>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>6. 커버 &amp; 목차 페이지 구현 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><strong>커버 페이지</strong>: PinkLAB 로고 + 제목 중앙 정렬, page-break</li>
+                        <li><strong>목차 페이지</strong>: h1~h4 헤딩을 계층적 번호(1.1, 1.1.1...)로 정리, 앵커 링크 연결</li>
+                        <li>테스트 페이지 재실행 &rarr; 성공</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>7. 레이아웃 개선 + 마지막 페이지 + 문서화 요청</h3>
+                    <ul>
+                        <li>PinkLAB 로고를 페이지 하단 3/4 지점으로 이동</li>
+                        <li>마지막 페이지에 YouTube 채널 (<code>@pinklab_studio</code>) 홍보</li>
+                        <li><code>history.html</code>: 프로젝트 히스토리</li>
+                        <li><code>architecture.html</code>: 코드 구조 문서</li>
+                        <li><code>README.md</code>: 사용법 및 dependency</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 8 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>8. 최종 구현 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li>커버 페이지 &mdash; 제목+메타를 상단 3/4, 로고를 하단 1/4에 배치</li>
+                        <li>마지막 페이지 &mdash; PinkLAB 로고, YouTube 구독 버튼, 채널 URL 홍보</li>
+                        <li>문서 3건 작성 완료</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 9 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>9. 프레젠테이션 모드 요청</h3>
+                    <p>Confluence 페이지를 슬라이드 형태의 발표 자료로도 변환할 수 있게 해달라. H1/H2는 타이틀 슬라이드, H3+는 콘텐츠 슬라이드로 분리.</p>
+                </div>
+            </div>
+
+            <!-- Step 10 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>10. 프레젠테이션 모드 구현 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><strong>슬라이드 HTML</strong>: 16:9 레이아웃, topbar(섹션명 + 제목 + 로고) + footer(저자 + 페이지번호)</li>
+                        <li><strong>키보드 네비게이션</strong>: Space/화살표/PageUp/Down/Home/End + 마우스 휠</li>
+                        <li><strong>슬라이드 PDF</strong>: 1280&times;720px 페이지 사이즈</li>
+                        <li>제목&ndash;본문 수직 중앙 정렬, 간격 최적화</li>
+                        <li>비디오 첨부파일 자동 다운로드 &amp; <code>&lt;video&gt;</code> 태그 재생 지원</li>
+                        <li>인쇄 시 <code>page-break</code> + <code>break-after: page</code> 적용</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 11 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>11. 사용법 정리 + 문서 업데이트 요청</h3>
+                    <p>토큰을 <code>.env</code> 대신 <code>confluence_token.txt</code>로 관리하도록 변경. 출력물을 Document PDF + Presentation HTML + Presentation PDF 3개로 정리. README, history, architecture 문서 업데이트.</p>
+                </div>
+            </div>
+
+            <!-- Step 12 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>12. 최종 정리 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><code>python-dotenv</code> 의존성 제거, <code>confluence_token.txt</code> 직접 파싱</li>
+                        <li>출력물 3개로 정리 (Document HTML 제거)</li>
+                        <li><code>README.md</code> 전면 재작성 (설치, 설정, 사용법, 프레젠테이션 조작법)</li>
+                        <li><code>history.html</code>, <code>architecture.html</code> 업데이트</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-04
+        </footer>
+    </div>
+</body>
+</html>

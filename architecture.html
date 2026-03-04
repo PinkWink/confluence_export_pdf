@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture - Confluence PDF Exporter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #fdfcfb 0%, #f0f4ff 50%, #fef9f4 100%);
+            color: #2d3748;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 48px; }
+        header h1 { font-size: 32px; font-weight: 700; color: #1a202c; margin-bottom: 8px; }
+        header p { font-size: 15px; color: #718096; }
+
+        .section {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+            border: 1px solid #ede9f6;
+        }
+        .section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .icon-purple { background: #EDE9FE; }
+        .icon-blue { background: #DBEAFE; }
+        .icon-pink { background: #FCE7F3; }
+        .icon-green { background: #D1FAE5; }
+        .icon-orange { background: #FEF3C7; }
+        .icon-teal { background: #CCFBF1; }
+
+        .file-tree {
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 14px;
+            line-height: 2;
+            background: #faf8ff;
+            border-radius: 8px;
+            padding: 20px 24px;
+        }
+        .file-tree .folder { color: #6D28D9; font-weight: 600; }
+        .file-tree .file { color: #4a5568; }
+        .file-tree .desc { color: #a0aec0; font-size: 12px; }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .flow-box {
+            background: #f7f5ff;
+            border: 2px solid #DDD6FE;
+            border-radius: 10px;
+            padding: 12px 18px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #5B21B6;
+            min-width: 130px;
+        }
+        .flow-box.highlight {
+            background: #FEF3C7;
+            border-color: #F59E0B;
+            color: #92400E;
+        }
+        .flow-arrow {
+            font-size: 20px;
+            color: #C4B5FD;
+        }
+        .flow-label {
+            font-size: 12px;
+            color: #718096;
+            text-align: center;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #f0eef5; }
+        th { font-weight: 600; color: #553C9A; background: #FAF5FF; }
+        td code {
+            background: #f0ecfb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #6D28D9;
+        }
+
+        .func-group { margin-bottom: 16px; }
+        .func-group h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #6D28D9;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #EDE9FE;
+        }
+        .func-item {
+            display: flex;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        .func-name {
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-weight: 600;
+            color: #5B21B6;
+            min-width: 300px;
+            flex-shrink: 0;
+        }
+        .func-desc { color: #4a5568; }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Code Architecture</h1>
+            <p>Confluence PDF Exporter &mdash; confluence_export.py</p>
+        </header>
+
+        <!-- File Structure -->
+        <div class="section">
+            <h2><span class="icon icon-purple">D</span> File Structure</h2>
+            <div class="file-tree">
+                <div><span class="folder">confluence_print/</span></div>
+                <div>&nbsp;&nbsp;<span class="file">confluence_export.py</span> <span class="desc">&mdash; Main script (CLI entry point)</span></div>
+                <div>&nbsp;&nbsp;<span class="file">confluence_token.txt</span> <span class="desc">&mdash; Authentication (URL, EMAIL, API_TOKEN) &mdash; not in git</span></div>
+                <div>&nbsp;&nbsp;<span class="file">.gitignore</span> <span class="desc">&mdash; Excludes token file, output/, __pycache__/</span></div>
+                <div>&nbsp;&nbsp;<span class="file">pinklab_logo_text.png</span> <span class="desc">&mdash; PinkLAB logo for cover/back/topbar</span></div>
+                <div>&nbsp;&nbsp;<span class="file">history.html</span> <span class="desc">&mdash; Project history document</span></div>
+                <div>&nbsp;&nbsp;<span class="file">architecture.html</span> <span class="desc">&mdash; This file</span></div>
+                <div>&nbsp;&nbsp;<span class="file">README.md</span> <span class="desc">&mdash; Usage guide</span></div>
+                <div>&nbsp;&nbsp;<span class="folder">output/</span> <span class="desc">&mdash; Generated PDF, HTML, video files</span></div>
+            </div>
+        </div>
+
+        <!-- Processing Pipeline -->
+        <div class="section">
+            <h2><span class="icon icon-blue">P</span> Processing Pipeline</h2>
+            <div class="flow-diagram">
+                <div class="flow-box">CLI Input<br><small>Page URL</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">Token File<br><small>confluence_token.txt</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">REST API<br><small>Fetch HTML</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">BeautifulSoup<br><small>Process Macros</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box highlight">Fork</div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-box">Document<br><small>build_html()</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">Playwright<br><small>A4 PDF</small></div>
+                <div class="flow-arrow">&nbsp;</div>
+                <div class="flow-box">Presentation<br><small>build_presentation_html()</small></div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">HTML + PDF<br><small>16:9 slides</small></div>
+            </div>
+        </div>
+
+        <!-- Document HTML Structure -->
+        <div class="section">
+            <h2><span class="icon icon-pink">H</span> Document PDF Structure</h2>
+            <table>
+                <tr><th>#</th><th>Section</th><th>Builder Function</th><th>Description</th></tr>
+                <tr><td>1</td><td>Cover Page</td><td><code>build_cover_page()</code></td><td>Title at upper 3/4, PinkLAB logo at bottom 1/4</td></tr>
+                <tr><td>2</td><td>TOC Page</td><td><code>build_toc_page()</code></td><td>Auto-generated from h1~h4 headings with numbering</td></tr>
+                <tr><td>3</td><td>Content</td><td><code>build_html()</code></td><td>Processed Confluence body with styled elements</td></tr>
+                <tr><td>4</td><td>Back Page</td><td><code>build_back_page()</code></td><td>PinkLAB YouTube channel promotion</td></tr>
+            </table>
+        </div>
+
+        <!-- Presentation Structure -->
+        <div class="section">
+            <h2><span class="icon icon-teal">S</span> Presentation Slide Structure</h2>
+            <table>
+                <tr><th>Heading</th><th>Slide Type</th><th>Layout</th></tr>
+                <tr><td>Cover</td><td><code>slide-cover</code></td><td>Title + meta centered, logo at bottom</td></tr>
+                <tr><td>H1 / H2</td><td><code>slide-heading</code></td><td>Title-only slide (section divider)</td></tr>
+                <tr><td>H3+</td><td><code>slide-content</code></td><td>Title + body content centered vertically</td></tr>
+                <tr><td>Back</td><td><code>slide-back</code></td><td>YouTube promo slide</td></tr>
+            </table>
+            <p style="margin-top: 12px; font-size: 13px; color: #718096;">
+                Each slide: topbar (section name | page title | PinkLAB logo) + footer (author | page number).
+                JS keyboard/wheel navigation for slideshow mode.
+            </p>
+        </div>
+
+        <!-- Function Reference -->
+        <div class="section">
+            <h2><span class="icon icon-green">F</span> Function Reference</h2>
+
+            <div class="func-group">
+                <h4>Config &amp; API Helpers</h4>
+                <div class="func-item">
+                    <span class="func-name">load_token_file()</span>
+                    <span class="func-desc">Read confluence_token.txt and set credentials</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">get_auth()</span>
+                    <span class="func-desc">Return (email, token) tuple for Basic Auth</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">extract_page_id(url)</span>
+                    <span class="func-desc">Parse Confluence URL to extract page ID</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">fetch_page(page_id)</span>
+                    <span class="func-desc">Fetch page via REST API v2</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">fetch_page_v1(page_id)</span>
+                    <span class="func-desc">Fallback fetch via REST API v1</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">download_image(url)</span>
+                    <span class="func-desc">Download image &rarr; base64 data URI</span>
+                </div>
+            </div>
+
+            <div class="func-group">
+                <h4>HTML Processors (Confluence Macro &rarr; Standard HTML)</h4>
+                <div class="func-item">
+                    <span class="func-name">process_code_blocks(soup)</span>
+                    <span class="func-desc">Code macros &rarr; styled blocks with line numbers</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_panels(soup)</span>
+                    <span class="func-desc">Info/Note/Warning/Tip/Error panels</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_expand(soup)</span>
+                    <span class="func-desc">Expand/Collapse sections</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_status(soup)</span>
+                    <span class="func-desc">Status lozenge macros</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_images(soup)</span>
+                    <span class="func-desc">ac:image &rarr; img or video tags (detects video extensions)</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">resolve_attachment_images(soup, id)</span>
+                    <span class="func-desc">Download image attachments &rarr; base64 inline</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">resolve_attachment_videos(soup, id, dir)</span>
+                    <span class="func-desc">Download video attachments &rarr; save as files</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_toc(soup)</span>
+                    <span class="func-desc">Remove Confluence TOC macros</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_emoticons(soup)</span>
+                    <span class="func-desc">Convert to Unicode emoji</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_links(soup)</span>
+                    <span class="func-desc">ac:link &rarr; standard &lt;a&gt; tags</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">process_remaining_macros(soup)</span>
+                    <span class="func-desc">Graceful fallback for unknown macros</span>
+                </div>
+            </div>
+
+            <div class="func-group">
+                <h4>Document Builders</h4>
+                <div class="func-item">
+                    <span class="func-name">load_logo_base64()</span>
+                    <span class="func-desc">Load PinkLAB logo as base64</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">build_cover_page(title, logo)</span>
+                    <span class="func-desc">Cover page with title + logo</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">build_toc_page(soup)</span>
+                    <span class="func-desc">Auto-generated TOC from headings</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">build_back_page(logo)</span>
+                    <span class="func-desc">YouTube promo back page</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">build_html(title, soup)</span>
+                    <span class="func-desc">Assemble full document HTML</span>
+                </div>
+            </div>
+
+            <div class="func-group">
+                <h4>Presentation Builders</h4>
+                <div class="func-item">
+                    <span class="func-name">split_into_slides(soup)</span>
+                    <span class="func-desc">Split processed HTML by headings into slide data</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">build_presentation_html(data, id, soup)</span>
+                    <span class="func-desc">Assemble slide HTML with JS navigation</span>
+                </div>
+            </div>
+
+            <div class="func-group">
+                <h4>Output</h4>
+                <div class="func-item">
+                    <span class="func-name">generate_pdf(html, pdf, presentation)</span>
+                    <span class="func-desc">Playwright Chromium &rarr; A4 or 16:9 PDF</span>
+                </div>
+                <div class="func-item">
+                    <span class="func-name">main()</span>
+                    <span class="func-desc">CLI entry point, orchestrates full pipeline</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outputs -->
+        <div class="section">
+            <h2><span class="icon icon-orange">O</span> Output Files (3)</h2>
+            <table>
+                <tr><th>File</th><th>Format</th><th>Description</th></tr>
+                <tr><td><code>{title}.pdf</code></td><td>A4 PDF</td><td>Document: cover + TOC + content + back page</td></tr>
+                <tr><td><code>present_{title}.html</code></td><td>HTML</td><td>Presentation: interactive slides with keyboard/wheel navigation</td></tr>
+                <tr><td><code>present_{title}.pdf</code></td><td>16:9 PDF</td><td>Presentation: 1280&times;720px slide PDF</td></tr>
+            </table>
+        </div>
+
+        <!-- Dependencies -->
+        <div class="section">
+            <h2><span class="icon icon-orange">L</span> Dependencies</h2>
+            <table>
+                <tr><th>Package</th><th>Role</th></tr>
+                <tr><td><code>requests</code></td><td>Confluence REST API HTTP calls</td></tr>
+                <tr><td><code>beautifulsoup4</code></td><td>HTML parsing &amp; Confluence macro transformation</td></tr>
+                <tr><td><code>playwright</code></td><td>Headless Chromium for PDF rendering</td></tr>
+            </table>
+        </div>
+
+        <footer>
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-04
+        </footer>
+    </div>
+</body>
+</html>
