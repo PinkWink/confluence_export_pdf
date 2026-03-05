@@ -310,6 +310,28 @@
                 </div>
             </div>
 
+            <!-- Step 15 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>15. 문서 PDF 표지에서도 메타정보 제거 요청</h3>
+                    <p>수업자료용 문서 PDF의 표지에 표시되는 &ldquo;Exported from Confluence&rdquo;, URL, 날짜 정보도 제거해달라.</p>
+                </div>
+            </div>
+
+            <!-- Step 16 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>16. 문서 PDF 표지 메타정보 제거 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><code>build_cover_page()</code>에서 <code>cover-meta</code> div 전체 제거 (Exported from Confluence, URL, 날짜)</li>
+                        <li>불필요해진 <code>from datetime import date</code> 및 <code>today</code> 변수 정리</li>
+                        <li>표지에 제목 + 구분선 + 로고만 표시</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
         <footer>

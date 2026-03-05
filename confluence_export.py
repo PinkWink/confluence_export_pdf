@@ -816,9 +816,6 @@ def load_logo_base64() -> str:
 
 def build_cover_page(title: str, logo_b64: str) -> str:
     """Build a cover page with title at center-upper area and logo at bottom quarter."""
-    from datetime import date
-    today = date.today().strftime("%Y-%m-%d")
-
     logo_html = ""
     if logo_b64:
         logo_html = f'<img class="cover-logo" src="{logo_b64}" alt="PinkLAB">'
@@ -828,11 +825,6 @@ def build_cover_page(title: str, logo_b64: str) -> str:
         <div class="cover-top-area">
             <div class="cover-title">{title}</div>
             <div class="cover-divider"></div>
-            <div class="cover-meta">
-                Exported from Confluence<br>
-                {CONFLUENCE_URL}<br>
-                {today}
-            </div>
         </div>
         <div class="cover-bottom-area">
             {logo_html}
