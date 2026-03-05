@@ -1,89 +1,60 @@
-# Confluence PDF Exporter — Project History
+# Project History — Confluence PDF Exporter
 
-> User requests & Claude implementation log
+## 1. User Request — Confluence PDF Quality Improvement
+- Confluence Cloud's built-in PDF exporter produces poor output; code blocks lack line numbers.
+- Requested a tool using MCP to connect to Confluence and convert pages to HTML/PDF.
+- Domain: `https://pinkwink.atlassian.net/`, Output: HTML + PDF
 
----
+## 2. Claude — Approach Design & Planning
+- Chose **REST API + Python script** over Confluence MCP Server or WebFetch.
+- Created conda environment `confluence` (Python 3.11).
+- Packages: `requests`, `beautifulsoup4`, `playwright`, `python-dotenv`.
 
-## 1. Confluence PDF Quality Improvement Request — *User*
+## 3. Claude — Core Script Implementation
+- Wrote `confluence_export.py`: REST API v2/v1 auto-switch, page ID extraction from URL, code block line numbers, base64 image embedding, macro conversion, PDF generation via Playwright Chromium.
 
-The built-in Confluence Cloud PDF exporter produces low-quality output, especially lacking line numbers in code blocks. The user requested a solution using MCP or API to convert Confluence pages to HTML/PDF.
+## 4. Claude — Image Download Path Fix
+- Fixed image download URL requiring `/wiki` prefix for Confluence Cloud.
 
-- Domain: `https://pinkwink.atlassian.net/`
-- Email: `pinkwink.korea@gmail.com`
-- API Token: Provided
-- Output format: Both HTML and PDF
+## 5. User Request — Cover Page + TOC Page
+- Requested a title page (PinkLAB logo + title) and a table of contents page.
 
-## 2. Approach Design & Planning — *Claude* `Plan`
+## 6. Claude — Cover & TOC Implementation
+- Cover page: PinkLAB logo + centered title with page-break.
+- TOC page: hierarchical numbering (1.1, 1.1.1...) with anchor links.
 
-Evaluated three approaches (Confluence REST API + script, Confluence MCP Server, WebFetch) and chose **REST API + Python script**.
+## 7. User Request — Layout Improvement + Last Page + Documentation
+- Move PinkLAB logo to bottom 1/4 of cover page.
+- Add YouTube channel promotion (`@pinklab_studio`) on the last page.
+- Create `history.html`, `architecture.html`, `README.md`.
 
-- Created conda environment `confluence` (Python 3.11)
-- Packages: `requests`, `beautifulsoup4`, `playwright`, `python-dotenv`
-- PDF rendering via Playwright Chromium
+## 8. Claude — Final Implementation
+- Cover: title+meta at top 3/4, logo at bottom 1/4.
+- Last page: PinkLAB logo, YouTube subscribe button, channel URL.
+- All 3 documents created.
 
-## 3. Core Script Implementation — *Claude* `Done`
+## 9. User Request — Presentation Mode
+- Convert Confluence pages into slide-style presentations. H1/H2 as title slides, H3+ as content slides.
 
-Wrote `confluence_export.py` with the following features:
+## 10. Claude — Presentation Mode Implementation
+- 16:9 slide layout with topbar (section + title + logo) and footer (author + page number).
+- Keyboard navigation: Space/Arrow/PageUp/Down/Home/End + mouse wheel.
+- Slide PDF: 1280×720px page size.
+- Video attachment auto-download & `<video>` tag playback support.
 
-- Automatic switching between Confluence REST API v2/v1
-- Auto-extraction of page ID from URL
-- Code block line numbers (`<ac:structured-macro>` → styled HTML)
-- Image base64 inline embedding
-- Confluence macro conversion: panels, emoticons, links, status badges
-- PDF generation via Playwright Chromium
+## 11. User Request — Usage Cleanup + Documentation Update
+- Switch token management from `.env` to `confluence_token.txt`.
+- Consolidate output to 3 files: Document PDF + Presentation HTML + Presentation PDF.
 
-## 4. Image Download Path Fix — *Claude* `Bug Fix`
+## 12. Claude — Final Cleanup
+- Removed `python-dotenv` dependency, direct `confluence_token.txt` parsing.
+- 3 output files (removed Document HTML).
+- Rewrote `README.md`, updated `history.html` and `architecture.html`.
 
-Discovered that Confluence Cloud image download URLs require a `/wiki` prefix. Fixed the `download_image()` function to correctly load all attached images.
+## 13. User Request — Presentation Image Scaling + Cover Cleanup
+- Small images in presentations displayed at original small size — requested scaling up to fit slides.
+- Remove "Exported from Confluence", URL, and date meta info from the cover slide.
 
-## 5. Cover Page + TOC Page Request — *User*
-
-Requested a cover page (PinkLAB logo + title) and a table of contents page. Asked to re-apply to the test page.
-
-## 6. Cover & TOC Page Implementation — *Claude* `Done`
-
-- **Cover page**: PinkLAB logo + title center-aligned with page-break
-- **TOC page**: Hierarchical numbering (1.1, 1.1.1...) from h1–h4 headings with anchor links
-- Re-ran on test page → success
-
-## 7. Layout Improvements + Back Page + Documentation Request — *User*
-
-- Move PinkLAB logo to the bottom 3/4 position on the cover page
-- Add a back page promoting the YouTube channel (`@pinklab_studio`)
-- Create `history.html`: project history
-- Create `architecture.html`: code structure documentation
-- Create `README.md`: usage guide and dependencies
-
-## 8. Final Implementation — *Claude* `Done`
-
-- Cover page — title + meta at upper 3/4, logo at bottom 1/4
-- Back page — PinkLAB logo, YouTube subscribe button, channel URL promotion
-- All 3 documentation files created
-
-## 9. Presentation Mode Request — *User*
-
-Requested the ability to convert Confluence pages into slide-style presentation materials. H1/H2 as title slides, H3+ as content slides.
-
-## 10. Presentation Mode Implementation — *Claude* `Done`
-
-- **Slide HTML**: 16:9 layout with topbar (section name + title + logo) + footer (author + page number)
-- **Keyboard navigation**: Space / Arrow keys / PageUp / PageDown / Home / End + mouse wheel
-- **Slide PDF**: 1280×720px page size
-- Title–body vertical centering with optimized spacing
-- Auto-download video attachments & `<video>` tag playback support
-- Print-ready `page-break` + `break-after: page` applied
-
-## 11. Usage Documentation + Update Request — *User*
-
-Changed token management from `.env` to `confluence_token.txt`. Organized outputs into 3 files: Document PDF + Presentation HTML + Presentation PDF. Requested updates to README, history, and architecture docs.
-
-## 12. Final Cleanup — *Claude* `Done`
-
-- Removed `python-dotenv` dependency; direct parsing of `confluence_token.txt`
-- Streamlined to 3 output files (removed Document HTML)
-- Rewrote `README.md` (installation, setup, usage, presentation controls)
-- Updated `history.html` and `architecture.html`
-
----
-
-*Built with Claude Code (Claude Opus 4.6) · 2026-03-04*
+## 14. Claude — Presentation Image Scaling & Cover Cleanup
+- **Image scaling**: Removed inline `width`/`height` attributes from images in `build_presentation_html()`. Added CSS `min-height: 200px` so small images scale up to fill available slide space.
+- **Cover cleanup**: Removed `cover-meta` section (Exported from Confluence, URL, date) from the cover slide — now shows only title + divider + logo.

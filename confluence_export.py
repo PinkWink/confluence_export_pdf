@@ -1208,7 +1208,7 @@ body {
     display: block;
     object-fit: contain;
     flex: 1;
-    min-height: 0;
+    min-height: 200px;
 }
 .slide-content .content-inner > p:has(img) {
     flex: 1;
@@ -1227,6 +1227,7 @@ body {
     object-fit: contain;
     display: block;
     margin: 0 auto;
+    min-height: 200px;
 }
 .slide-content .content-inner img {
     max-width: calc(100% - 20px);
@@ -1395,16 +1396,18 @@ def build_presentation_html(page_data: dict, page_id: str, processed_soup: Beaut
         <div class="cover-top-area">
             <div class="cover-title">{title}</div>
             <div class="cover-divider"></div>
-            <div class="cover-meta">
-                Exported from Confluence<br>
-                {CONFLUENCE_URL}<br>
-                {today}
-            </div>
         </div>
         <div class="cover-bottom-area">
             {cover_logo}
         </div>
     </div>"""
+
+    # --- Remove inline width/height from images so CSS can scale them up ---
+    for img in processed_soup.find_all("img"):
+        if img.has_attr("width"):
+            del img["width"]
+        if img.has_attr("height"):
+            del img["height"]
 
     # --- Parse content into slides ---
     slides_data = []  # list of (type, section_name, heading_text, content_html)

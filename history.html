@@ -286,10 +286,34 @@
                 </div>
             </div>
 
+            <!-- Step 13 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>13. 프레젠테이션 이미지 확대 + 표지 메타정보 제거 요청</h3>
+                    <ul>
+                        <li>프레젠테이션에서 원본 크기가 작은 이미지가 그대로 작게 표시되는 문제 &mdash; 슬라이드에 맞게 확대해달라</li>
+                        <li>표지 슬라이드에서 &ldquo;Exported from Confluence&rdquo;, URL, 날짜 등 메타 정보를 제거해달라</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 14 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>14. 프레젠테이션 이미지 확대 &amp; 표지 정리 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><strong>이미지 확대</strong>: <code>build_presentation_html()</code>에서 이미지의 inline <code>width</code>/<code>height</code> 속성 제거, CSS에 <code>min-height: 200px</code> 추가하여 작은 이미지도 슬라이드 공간에 맞게 확대</li>
+                        <li><strong>표지 정리</strong>: 표지 슬라이드에서 <code>cover-meta</code> 영역(Exported from Confluence, URL, 날짜) 제거 &mdash; 제목 + 구분선 + 로고만 표시</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
         <footer>
-            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-04
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-05
         </footer>
     </div>
 </body>
