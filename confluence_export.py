@@ -197,6 +197,23 @@ code {
     border-left: 4px solid #00875A;
 }
 
+/* Custom panel (with title bar) */
+.confluence-custom-panel {
+    border: 1px solid #DFE1E6;
+    border-radius: 4px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+    overflow: hidden;
+}
+.confluence-custom-panel-title {
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 1em;
+}
+.confluence-custom-panel-body {
+    padding: 16px;
+}
+
 /* Images */
 img {
     max-width: 100%;
@@ -584,6 +601,44 @@ def process_panels(soup: BeautifulSoup) -> None:
             macro.replace_with(panel_div)
 
 
+def process_custom_panel(soup: BeautifulSoup) -> None:
+    """Convert Confluence panel macro (with optional title bar and colors)."""
+    for macro in soup.find_all("ac:structured-macro", attrs={"ac:name": "panel"}):
+        params = {}
+        for param in macro.find_all("ac:parameter"):
+            params[param.get("ac:name", "")] = param.get_text(strip=True)
+
+        title = params.get("title", "")
+        title_bg = params.get("titleBGColor", "#4C9AFF")
+        title_color = params.get("titleColor", "#FFFFFF")
+        bg_color = params.get("bgColor", "#FFFFFF")
+        border_color = params.get("borderColor", title_bg)
+
+        panel_div = soup.new_tag("div", attrs={
+            "class": "confluence-custom-panel",
+            "style": f"border-color: {border_color}; background-color: {bg_color};"
+        })
+
+        if title:
+            title_div = soup.new_tag("div", attrs={
+                "class": "confluence-custom-panel-title",
+                "style": f"background-color: {title_bg}; color: {title_color};"
+            })
+            title_div.string = title
+            panel_div.append(title_div)
+
+        body_div = soup.new_tag("div", attrs={
+            "class": "confluence-custom-panel-body"
+        })
+        body = macro.find("ac:rich-text-body")
+        if body:
+            for child in list(body.children):
+                body_div.append(child.extract())
+        panel_div.append(body_div)
+
+        macro.replace_with(panel_div)
+
+
 def process_expand(soup: BeautifulSoup) -> None:
     """Convert Confluence expand macros."""
     for macro in soup.find_all("ac:structured-macro", attrs={"ac:name": "expand"}):
@@ -650,6 +705,11 @@ def process_images(soup: BeautifulSoup) -> None:
 
         if attachment:
             filename = attachment.get("ri:filename", "")
+            # Fallback: if filename is UNKNOWN_ATTACHMENT, use ac:alt attribute
+            if filename == "UNKNOWN_ATTACHMENT":
+                alt_name = img_tag.get("ac:alt", "")
+                if alt_name:
+                    filename = alt_name
             if _is_video_file(filename):
                 video = soup.new_tag("video", attrs={
                     "controls": "",
@@ -939,6 +999,8 @@ def process_page_content(page_data: dict, page_id: str, output_dir: str = "outpu
     process_code_blocks(soup)
     print("  Processing panels...")
     process_panels(soup)
+    print("  Processing custom panels...")
+    process_custom_panel(soup)
     print("  Processing expand sections...")
     process_expand(soup)
     print("  Processing status macros...")
@@ -1300,6 +1362,17 @@ body {
 .slide-content .confluence-panel-warning { background: #FFFBEB; border-left: 4px solid #D69E2E; }
 .slide-content .confluence-panel-error { background: #FFF5F5; border-left: 4px solid #E53E3E; }
 .slide-content .confluence-panel-success { background: #F0FFF4; border-left: 4px solid #38A169; }
+
+/* Custom panels (with title bar) */
+.slide-content .confluence-custom-panel {
+    border-radius: 6px; margin: 10px 0; font-size: 14px; overflow: hidden;
+}
+.slide-content .confluence-custom-panel-title {
+    padding: 8px 14px; font-size: 14px;
+}
+.slide-content .confluence-custom-panel-body {
+    padding: 12px 16px;
+}
 
 /* Tables */
 .slide-content table {

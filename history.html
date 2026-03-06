@@ -332,10 +332,47 @@
                 </div>
             </div>
 
+            <!-- Step 17 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>17. 특정 페이지 이미지 깨짐 문제 보고 (2026-03-06)</h3>
+                    <p><code>하나의 노드에서 서로 다른 도메인ID에 접근</code> 페이지를 변환할 때 이미지가 모두 깨지는 문제 보고. 다른 페이지는 정상인데 해당 페이지만 이미지가 PDF/HTML에 포함되지 않음.</p>
+                </div>
+            </div>
+
+            <!-- Step 18 -->
+            <div class="step bot">
+                <div class="step-label">Claude Investigation</div>
+                <div class="step-card">
+                    <h3>18. 원인 분석 <span class="badge badge-key">Root Cause</span></h3>
+                    <p><strong>원인:</strong> Confluence Cloud에서 이미지를 인라인 붙여넣기(paste)할 때 간혹 발생하는 버그로, 페이지의 Storage Format에 이미지 파일명이 <code>ri:filename="UNKNOWN_ATTACHMENT"</code>로 저장되어 있었음.</p>
+                    <ul>
+                        <li>기존 코드는 <code>ri:filename</code> 값으로 첨부파일 API를 조회 &rarr; <code>UNKNOWN_ATTACHMENT</code>라는 파일은 존재하지 않아 이미지 다운로드 실패</li>
+                        <li>하지만 <code>ac:alt</code> 속성에는 실제 파일명(예: <code>image-20250307-094951.png</code>)이 정상적으로 포함되어 있었음</li>
+                        <li>첨부파일 API로 확인 결과, 실제 파일들은 모두 정상적으로 서버에 존재</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 19 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>19. UNKNOWN_ATTACHMENT fallback 처리 <span class="badge badge-done">Bug Fix</span></h3>
+                    <p><code>process_images()</code> 함수에서 <code>ri:filename</code>이 <code>UNKNOWN_ATTACHMENT</code>일 때 <code>ac:alt</code> 속성의 값을 fallback 파일명으로 사용하도록 수정.</p>
+                    <ul>
+                        <li>수정 위치: <code>confluence_export.py:709-712</code> (4줄 추가)</li>
+                        <li>로직: <code>ri:filename == "UNKNOWN_ATTACHMENT"</code>이면 같은 매크로의 <code>ac:alt</code> 태그에서 실제 파일명을 추출하여 사용</li>
+                        <li>결과: 해당 페이지의 모든 이미지가 정상적으로 Document PDF, Presentation HTML, Presentation PDF에 포함됨</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
         <footer>
-            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-05
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-06
         </footer>
     </div>
 </body>
