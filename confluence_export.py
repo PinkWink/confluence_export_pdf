@@ -1412,11 +1412,90 @@ body {
 .slide-back .back-yt-url { font-size: 14px; color: #999; }
 .slide-back .back-footer { margin-top: 48px; font-size: 12px; color: #B0B0B0; }
 
+/* ===== TOC Navigation Overlay ===== */
+.toc-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+.toc-overlay.active { display: flex; }
+.toc-panel {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+    width: 520px;
+    max-height: 75vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: tocFadeIn 0.15s ease-out;
+}
+@keyframes tocFadeIn {
+    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.toc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid #EDF2F7;
+}
+.toc-header h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+}
+.toc-header .toc-hint {
+    font-size: 12px;
+    color: #A0AEC0;
+}
+.toc-list {
+    overflow-y: auto;
+    padding: 10px 0;
+    list-style: none;
+    margin: 0;
+}
+.toc-item {
+    padding: 8px 24px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.1s;
+    border-left: 3px solid transparent;
+}
+.toc-item:hover, .toc-item.selected {
+    background: #F0F4FF;
+    border-left-color: #0052CC;
+}
+.toc-item.selected {
+    font-weight: 600;
+    color: #0052CC;
+}
+.toc-item .toc-page {
+    font-size: 11px;
+    color: #A0AEC0;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+.toc-item.toc-h1 { padding-left: 24px; font-weight: 700; font-size: 15px; }
+.toc-item.toc-h2 { padding-left: 40px; font-weight: 600; }
+.toc-item.toc-h3 { padding-left: 56px; }
+
 @media print {
     .slide { min-height: 0; height: 100vh; }
     .slide-back .back-yt-btn { color: #fff !important; }
     .slide-back .back-yt-btn::after, .slide-back .back-yt-url::after { content: none !important; }
     a[href^="http"]::after { content: none !important; }
+    .toc-overlay { display: none !important; }
 }
 """
 
@@ -1521,8 +1600,10 @@ def build_presentation_html(page_data: dict, page_id: str, processed_soup: Beaut
         pnum = idx + 2  # cover is page 1
 
         if stype == 'heading':
+            # Determine heading level: if section_name == heading_text, it's the first time this section appears
+            h_level = 'h1'  # h1/h2 heading slides
             content_slides.append(f"""
-    <div class="slide slide-heading">
+    <div class="slide slide-heading" data-toc-level="{h_level}" data-toc-title="{heading_text}">
         {topbar(section_name)}
         <div class="heading-body">
             <div class="heading-text">{heading_text}</div>
@@ -1531,8 +1612,9 @@ def build_presentation_html(page_data: dict, page_id: str, processed_soup: Beaut
     </div>""")
         else:
             title_html = f'<div class="content-title">{heading_text}</div>' if heading_text else ''
+            toc_attr = f' data-toc-level="h3" data-toc-title="{heading_text}"' if heading_text else ''
             content_slides.append(f"""
-    <div class="slide slide-content">
+    <div class="slide slide-content"{toc_attr}>
         {topbar(section_name)}
         <div class="content-body">
             {title_html}
@@ -1582,6 +1664,18 @@ body {{ overflow: hidden; }}
 </head>
 <body>
     {"".join(all_slides)}
+
+    <!-- TOC Navigation Overlay -->
+    <div class="toc-overlay" id="tocOverlay">
+        <div class="toc-panel">
+            <div class="toc-header">
+                <h3>Table of Contents</h3>
+                <span class="toc-hint">T to close &middot; Enter to jump &middot; Arrow keys to navigate</span>
+            </div>
+            <ul class="toc-list" id="tocList"></ul>
+        </div>
+    </div>
+
 <script>
 (function() {{
     const slides = document.querySelectorAll('.slide');
@@ -1596,8 +1690,91 @@ body {{ overflow: hidden; }}
         setTimeout(() => {{ scrolling = false; }}, 400);
     }}
 
+    /* --- TOC Navigation --- */
+    const tocOverlay = document.getElementById('tocOverlay');
+    const tocList = document.getElementById('tocList');
+    let tocOpen = false;
+    let tocItems = [];
+    let tocSelected = 0;
+
+    function buildToc() {{
+        tocList.innerHTML = '';
+        tocItems = [];
+        slides.forEach((slide, idx) => {{
+            const level = slide.getAttribute('data-toc-level');
+            const title = slide.getAttribute('data-toc-title');
+            if (!title) return;
+            const li = document.createElement('li');
+            li.className = 'toc-item toc-' + level;
+            li.innerHTML = '<span class="toc-label">' + title + '</span><span class="toc-page">' + (idx + 1) + ' / ' + slides.length + '</span>';
+            li.setAttribute('data-slide-idx', idx);
+            li.addEventListener('click', function() {{
+                closeToc();
+                goTo(idx);
+            }});
+            tocList.appendChild(li);
+            tocItems.push({{ el: li, idx: idx }});
+        }});
+    }}
+
+    function updateTocSelection() {{
+        tocItems.forEach((item, i) => {{
+            item.el.classList.toggle('selected', i === tocSelected);
+        }});
+        if (tocItems[tocSelected]) {{
+            tocItems[tocSelected].el.scrollIntoView({{ block: 'nearest' }});
+        }}
+    }}
+
+    function openToc() {{
+        buildToc();
+        if (tocItems.length === 0) return;
+        tocOpen = true;
+        tocOverlay.classList.add('active');
+        // Select the closest TOC item to current slide
+        tocSelected = 0;
+        for (let i = tocItems.length - 1; i >= 0; i--) {{
+            if (tocItems[i].idx <= current) {{ tocSelected = i; break; }}
+        }}
+        updateTocSelection();
+    }}
+
+    function closeToc() {{
+        tocOpen = false;
+        tocOverlay.classList.remove('active');
+    }}
+
+    tocOverlay.addEventListener('click', function(e) {{
+        if (e.target === tocOverlay) closeToc();
+    }});
+
     document.addEventListener('keydown', function(e) {{
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {{
+        if (tocOpen) {{
+            if (e.key === 't' || e.key === 'T' || e.key === 'Escape') {{
+                e.preventDefault();
+                closeToc();
+            }} else if (e.key === 'ArrowDown') {{
+                e.preventDefault();
+                tocSelected = Math.min(tocSelected + 1, tocItems.length - 1);
+                updateTocSelection();
+            }} else if (e.key === 'ArrowUp') {{
+                e.preventDefault();
+                tocSelected = Math.max(tocSelected - 1, 0);
+                updateTocSelection();
+            }} else if (e.key === 'Enter') {{
+                e.preventDefault();
+                if (tocItems[tocSelected]) {{
+                    closeToc();
+                    goTo(tocItems[tocSelected].idx);
+                }}
+            }}
+            return;
+        }}
+
+        if (e.key === 't' || e.key === 'T') {{
+            e.preventDefault();
+            openToc();
+        }} else if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {{
             e.preventDefault();
             goTo(current + 1);
         }} else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {{
@@ -1613,6 +1790,7 @@ body {{ overflow: hidden; }}
     }});
 
     document.addEventListener('wheel', function(e) {{
+        if (tocOpen) return;
         e.preventDefault();
         if (e.deltaY > 0) goTo(current + 1);
         else if (e.deltaY < 0) goTo(current - 1);

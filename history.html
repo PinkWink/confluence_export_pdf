@@ -369,10 +369,34 @@
                 </div>
             </div>
 
+            <!-- Step 20 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>20. 프레젠테이션 TOC 네비게이션 요청 (2026-03-07)</h3>
+                    <p>프레젠테이션 HTML에서 단축키를 누르면 목차(H1, H2, H3)가 팝업으로 표시되어, 원하는 슬라이드로 바로 점프할 수 있는 기능 요청.</p>
+                </div>
+            </div>
+
+            <!-- Step 21 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>21. TOC 네비게이션 구현 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><strong>TOC 오버레이</strong>: <code>T</code> 키로 토글되는 플로팅 패널 &mdash; H1/H2/H3 헤딩을 계층적으로 표시</li>
+                        <li><strong>키보드 조작</strong>: 화살표 키로 항목 선택, Enter로 해당 슬라이드 이동, T/Escape로 닫기</li>
+                        <li><strong>시각 디자인</strong>: 반투명 배경, 애니메이션 패널, 현재 슬라이드 하이라이트, 페이지 번호 표시</li>
+                        <li><strong>CSS</strong>: <code>.toc-overlay</code>, <code>.toc-panel</code>, <code>.toc-item</code> 스타일 추가, 레벨별 들여쓰기, 인쇄 시 숨김</li>
+                        <li><strong>데이터 속성</strong>: 각 슬라이드에 <code>data-toc-level</code>, <code>data-toc-title</code> 속성 부여하여 JS에서 동적 TOC 생성</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
         <footer>
-            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-06
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-07
         </footer>
     </div>
 </body>

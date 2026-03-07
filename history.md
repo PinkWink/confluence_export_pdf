@@ -58,3 +58,27 @@
 ## 14. Claude — Presentation Image Scaling & Cover Cleanup
 - **Image scaling**: Removed inline `width`/`height` attributes from images in `build_presentation_html()`. Added CSS `min-height: 200px` so small images scale up to fill available slide space.
 - **Cover cleanup**: Removed `cover-meta` section (Exported from Confluence, URL, date) from the cover slide — now shows only title + divider + logo.
+
+## 15. User Request — Document PDF Cover Meta Removal
+- Remove "Exported from Confluence", URL, and date info from the document PDF cover page as well.
+
+## 16. Claude — Document PDF Cover Meta Removal
+- Removed `cover-meta` div from `build_cover_page()`. Cleaned up unused `from datetime import date` import and `today` variable.
+
+## 17. User Request — UNKNOWN_ATTACHMENT Image Fix
+- Reported broken images on a specific page where Confluence stored filenames as `UNKNOWN_ATTACHMENT`.
+
+## 18. Claude — UNKNOWN_ATTACHMENT Fallback
+- Root cause: Confluence paste bug stores `ri:filename="UNKNOWN_ATTACHMENT"` while `ac:alt` contains the real filename.
+- Added fallback in `process_images()`: when `ri:filename` is `UNKNOWN_ATTACHMENT`, extract the real filename from `ac:alt`.
+
+## 19. User Request — Presentation TOC Navigation (2026-03-07)
+- Requested a keyboard-triggered TOC popup for quick slide navigation in presentations.
+- TOC should list H1, H2, H3 headings with hierarchy and allow jumping to any slide.
+
+## 20. Claude — TOC Navigation Implementation
+- **TOC overlay**: Floating panel triggered by `T` key, showing all heading slides (H1/H2/H3) with hierarchical indentation.
+- **Keyboard navigation**: Arrow keys to move selection, Enter to jump, T/Escape to close.
+- **Visual design**: Semi-transparent backdrop, animated panel, current slide highlighted, page numbers shown.
+- **CSS**: Added `.toc-overlay`, `.toc-panel`, `.toc-item` styles with level-based indentation. Hidden in print.
+- **Data attributes**: Each slide with a heading gets `data-toc-level` and `data-toc-title` for JS-based TOC building.
