@@ -393,10 +393,33 @@
                 </div>
             </div>
 
+            <!-- Step 22 -->
+            <div class="step user">
+                <div class="step-label">User Request</div>
+                <div class="step-card">
+                    <h3>22. 프레젠테이션 Panel 슬라이드 채움 요청 (2026-03-09)</h3>
+                    <p>H3 콘텐츠 슬라이드에서 Panel 매크로(Info/Note/Warning 등)로 만들어진 글 상자가 너무 작게 표시되어 슬라이드 대부분이 비어 보이는 문제. 내용이 적을 때 패널이 슬라이드 화면에 꽉 차게 확대되도록 요청.</p>
+                </div>
+            </div>
+
+            <!-- Step 23 -->
+            <div class="step bot">
+                <div class="step-label">Claude Implementation</div>
+                <div class="step-card">
+                    <h3>23. Panel 자동 확장 구현 <span class="badge badge-done">Done</span></h3>
+                    <ul>
+                        <li><strong>Panel flex 확장</strong>: <code>.confluence-panel</code>, <code>.confluence-custom-panel</code>에 <code>flex: 1; width: 100%</code> 적용 &mdash; 슬라이드 내 빈 공간을 자동으로 채움</li>
+                        <li><strong>content-inner flex</strong>: <code>.content-inner</code>에 <code>flex: 1; width: 100%</code> 추가하여 content-body 전체 영역 활용</li>
+                        <li><strong>글자 크기 확대</strong>: 패널 폰트 14px &rarr; 18px, 패딩 12px/16px &rarr; 20px/28px, 테두리 4px &rarr; 5px로 슬라이드 가독성 향상</li>
+                        <li><strong>Custom panel body</strong>: <code>flex: 1; justify-content: center</code>로 제목이 있는 패널도 슬라이드에 꽉 차게 표시</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
         <footer>
-            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-07
+            Built with Claude Code (Claude Opus 4.6) &middot; 2026-03-09
         </footer>
     </div>
 </body>

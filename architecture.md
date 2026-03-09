@@ -41,7 +41,7 @@ CLI Input (Page URL)
 |---------|-----------------|-------------------------------------------|
 | Cover   | `slide-cover`   | Title + meta centered, logo at bottom     |
 | H1 / H2| `slide-heading` | Title-only slide (section divider)         |
-| H3+     | `slide-content` | Title + body content centered vertically   |
+| H3+     | `slide-content` | Title + body content centered vertically. Panels auto-expand to fill slide. |
 | Back    | `slide-back`    | YouTube promo slide                       |
 
 Each slide has a topbar (section name | page title | PinkLAB logo) and footer (author | page number).

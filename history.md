@@ -82,3 +82,13 @@
 - **Visual design**: Semi-transparent backdrop, animated panel, current slide highlighted, page numbers shown.
 - **CSS**: Added `.toc-overlay`, `.toc-panel`, `.toc-item` styles with level-based indentation. Hidden in print.
 - **Data attributes**: Each slide with a heading gets `data-toc-level` and `data-toc-title` for JS-based TOC building.
+
+## 21. User Request — Presentation Panel Slide Filling (2026-03-09)
+- H3 content slides with panel macros (Info/Note/Warning/etc.) show panels as small boxes, leaving most of the slide empty.
+- Requested panels to expand and fill the slide area when content is sparse.
+
+## 22. Claude — Panel Auto-Expand in Presentations
+- **Panel flex expansion**: Added `flex: 1; width: 100%` to `.confluence-panel` and `.confluence-custom-panel` so they grow to fill the `content-inner` container.
+- **Content-inner flex**: Made `.content-inner` use `flex: 1; width: 100%` to fill the full `content-body` area.
+- **Typography scaling**: Increased panel font size from 14px to 18px, padding from 12px/16px to 20px/28px, and border-left from 4px to 5px for better slide readability.
+- **Custom panel body**: Added `flex: 1; justify-content: center` to `.confluence-custom-panel-body` so titled panels also fill the slide.
